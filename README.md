@@ -2,7 +2,7 @@
 
 ## zrc-20
 
-This standard is fully based on domo's [brc-20 standard](https://domo-2.gitbook.io/brc-20-experiment/), with extension of one extra op code(**delegate)** to introduce brc-20 tokens to bitcoin L2 chains. The purpose is to extend the usability of brc-20 token, so users could port brc-20 tokens into the layer 2 and operate brc-20 tokens same way as erc-20 tokens on L2 chains.​
+This standard is fully based on domo-2's [brc-20 standard](https://domo-2.gitbook.io/brc-20-experiment/), with extension of one extra op code(**delegate)** to introduce brc-20 tokens to bitcoin L2 chains. The purpose is to extend the usability of brc-20 token, so users could port brc-20 tokens into the layer 2 and operate brc-20 tokens same way as erc-20 tokens on L2 chains.​
 
 
 
@@ -19,6 +19,7 @@ Changes:
   "op": "delegate",
   "tick": "ordi",
   "amt": "100",
+  "chain": "l2-chain-a",
   "to": "0x3Ea1756E8Ce21a41E15eC3F026A0eA379Cc3e1A5",
 }
 ```
