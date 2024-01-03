@@ -6,12 +6,16 @@ This standard is fully based on domo-2's [brc-20 standard](https://domo-2.gitboo
 
 
 
-Changes:
+<figure><img src=".gitbook/assets/Screenshot 2024-01-03 at 16.37.52.png" alt=""><figcaption></figcaption></figure>
 
-* the **deploy** operation of the zrc-20 tokens on Bitcoin will be interpreted into erc-20 contract deployment on L2, so each zrc-20 token will have a mirror erc-20 token on L2.
-* Bitcoin account (pubkey P) will have a mapped account (pubkey p) so that: p = P + delta, mapped account does not have the permission to operate the token since no one will have the private key of p.
-* A L2 chain will serve as the ledge of zrc-20 tokens. That mean all zrc-20 token operation on Bitcion chain will be tracked and interpreted into L2 token contract interactions, so balance of zrc-20 tokens can be easily checked by calling the mirror erc-20 contract.
-* With the op code **delegate**, a zrc-20 user A could delegate some of the balance to L2 account b, so that the private key holder of account b will be able manager these token while the balance will be deducted from user A's account. The delegate operation doing the exact operation of transferring tokens to a L2 account. After this operation, the L2 account user could operate the token same way as erc-20 tokens, no matter it's a transfer, swap or lock.
+
+
+Changes:&#x20;
+
+* The deploy operation of the zrc-20 tokens on Bitcoin will be interpreted into erc-20 contract deployment on L2, so each zrc-20 token will have a mirror erc-20 token on L2.&#x20;
+* Bitcoin account (pubkey P) will have a mapped account (address p) so that: <mark style="color:blue;">`p = keccak(PKH(P))[12:]`</mark>, mapped account does not have the permission to operate the token since no one will have the private key of p.&#x20;
+* A L2 chain will serve as the ledge of zrc-20 tokens. That means all zrc-20 token operations on the Bitcoin chain will be tracked and interpreted into L2 token contract interactions, so the balance of zrc-20 tokens can be easily checked by calling the mirror erc-20 contract. There’ll be a dedicated module(the indexer module) in Layer 2 node to index the zrc-20 inscriptions, this module works just like brc-20 indexer but with the extended feature supported.&#x20;
+* With the op code delegate, a zrc-20 user A could delegate some of the balance to L2 account b, so that the private key holder of account b will be capable of operating these tokens while the balance will be deducted from user A's account. The delegate operation doing the exact operation of transferring tokens to a L2 account. After this operation, the L2 account user could operate the token the same way as erc-20 tokens, no matter if it's a transfer, swap or lock. The output of the delegate operation should be a defined address, calculated as: P2PKH, <mark style="color:blue;">`PKH = keccak(chain, tick)`</mark>. So, the indexer of a specific zrc-20 token only needs to watch transactions with such an output for delegations.
 
 ```
 { 
@@ -24,7 +28,8 @@ Changes:
 }
 ```
 
-* If L2 account b transfers some of the balance to a L2 mapped account (pubkey p), that means an operation of **undelegate**. After this operation, the transferred balance will be only spendable by the private key holder of original L1 account(pubkey P = p - delta).
+* If L2 account b transfers some of the balance to a L2 mapped account (address p), that means an operation of un-delegate. After this operation, the transferred balance will be only spendable by the private key holder of the original L1 account P (such that <mark style="color:blue;">`p = keccak(PKH(P))[12:]`</mark>).&#x20;
+* Each time a newer state of the L2 network is submitted to the Bitcoin and verified in a way(ZKP etc), the afterward transfers which follow un-delegations can be assumed valid.
 
 
 
