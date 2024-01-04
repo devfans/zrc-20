@@ -14,7 +14,7 @@ Changes:&#x20;
 
 * The deploy operation of the zrc-20 tokens on Bitcoin will be interpreted into erc-20 contract deployment on L2, so each zrc-20 token will have a mirror erc-20 token on L2.&#x20;
 
-```
+```json
 { 
   "p": "zrc-20",
   "op": "deploy",
@@ -27,9 +27,26 @@ Changes:&#x20;
 
 * Bitcoin account (address A) will have a mapped account (address a) so that: <mark style="color:blue;">`a = keccak(A)[12:]`</mark>, mapped account does not have the permission to operate the token since no one will have the private key of p.&#x20;
 * A L2 chain will serve as the ledge of zrc-20 tokens. That means all zrc-20 token operations on the Bitcoin chain will be tracked and interpreted into L2 token contract interactions, so the balance of zrc-20 tokens can be easily checked by calling the mirror erc-20 contract. There’ll be a dedicated module(the indexer module) in Layer 2 node to index the zrc-20 inscriptions, this module works just like brc-20 indexer but with the extended feature supported.&#x20;
-* With the op code delegate, a zrc-20 user A could delegate some of the balance to L2 account b, so that the private key holder of account b will be capable of operating these tokens while the balance will be deducted from user A's account. The delegate operation doing the exact operation of transferring tokens to a L2 account. After this operation, the L2 account user could operate the token the same way as erc-20 tokens, no matter if it's a transfer, swap or lock. The inscription should be sent to the sender again as a second step.
+* With the op code delegate, a zrc-20 user A could delegate some of the balance to L2 account b, so that the private key holder of account b will be capable of operating these tokens while the balance will be deducted from user A's account. The delegate operation doing the exact operation of transferring tokens to a L2 account. After this operation, the L2 account user could operate the token the same way as erc-20 tokens, no matter if it's a transfer, swap or lock. The inscription should be sent to the sender again as a second step. When the sequencer of the L2 network produce L2 blocks, it will execute these zrc-20 operations on the erc-20 mirror contracts.
 
-```
+<pre class="language-python"><code class="lang-python"><strong>
+</strong><strong>def derive_zrc20_delegations(delegations: List[Delegattion]) -> List[DelegationSystemTxs]:
+</strong><strong>    return [derive_delegation_transaction(delegation) for delegation in delegations if is_delegation_valid(delegation)]
+</strong><strong>            
+</strong><strong>def produce_l2_block(parent: L2Block, current_l1_block: L1Block) -> L2Block:
+</strong><strong>    l2_block_candidate = new_l2_block_from_parent()
+</strong><strong>    if parent.l1_block.number != current_l1_block.number:
+</strong><strong>        delegations = fetch_l1_zrc20_delegations(parent.l1_block.number, current_l1_block.number)
+</strong><strong>        delegations_transactions = derive_zrc20_delegations(delegations)
+</strong><strong>        l2_block_candidate.system_txs = [*l2_block_candidate.system_txs, *delegations_transactions]
+</strong><strong>    return l2_block_candidate
+</strong><strong>            
+</strong>
+
+
+</code></pre>
+
+```json
 { 
   "p": "zrc-20",
   "op": "delegate",
