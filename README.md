@@ -40,11 +40,8 @@ Changes:&#x20;
 </strong><strong>        delegations_transactions = derive_zrc20_delegations(delegations)
 </strong><strong>        l2_block_candidate.system_txs = [*l2_block_candidate.system_txs, *delegations_transactions]
 </strong><strong>    return l2_block_candidate
-</strong><strong>            
-</strong>
-
-
-</code></pre>
+</strong><strong>    
+</strong></code></pre>
 
 ```json
 { 
