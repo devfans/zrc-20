@@ -34,7 +34,7 @@ Changes:&#x20;
 </strong><strong>    return [derive_delegation_transaction(delegation) for delegation in delegations if is_delegation_valid(delegation)]
 </strong><strong>            
 </strong><strong>def produce_l2_block(parent: L2Block, current_l1_block: L1Block) -> L2Block:
-</strong><strong>    l2_block_candidate = new_l2_block_from_parent()
+</strong><strong>    l2_block_candidate = new_l2_block_from_parent(parent)
 </strong><strong>    if parent.l1_block.number != current_l1_block.number:
 </strong><strong>        delegations = fetch_l1_zrc20_delegations(parent.l1_block.number, current_l1_block.number)
 </strong><strong>        delegations_transactions = derive_zrc20_delegations(delegations)
